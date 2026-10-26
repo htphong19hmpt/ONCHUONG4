@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HÓA HỌC 12 - ÔN TẬP CHƯƠNG 4: POLYMER VÀ VẬT LIỆU POLYMER (90 CÂU)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap');
+        body { font-family: 'Montserrat', sans-serif; }
+        .pulse-glow { animation: pulseGlow 2s infinite; }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 min-h-screen text-white flex flex-col items-center justify-between p-4 md:p-8">
+
+    <!-- Header -->
+    <header class="w-full max-w-4xl text-center my-4">
+        <div class="inline-block bg-blue-600 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full mb-2 shadow-lg">
+            Trò Chơi Học Tập - Hóa học 12
+        </div>
+        <h1 class="text-xl md:text-3xl font-extrabold bg-gradient-to-r from-teal-200 via-blue-200 to-purple-200 bg-clip-text text-transparent">
+            ÔN TẬP CHƯƠNG 4: POLYMER VÀ VẬT LIỆU POLYMER (TỔNG 90 CÂU: TRẮC NGHIỆM, ĐÚNG/SAI, TRẢ LỜI NGẮN)
+        </h1>
+        <p class="text-slate-300 text-sm md:text-base mt-1">Sách Kết nối tri thức với cuộc sống</p>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl bg-slate-800/80 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-700 p-6 md:p-8 my-auto relative overflow-hidden">
+
+        <!-- SETUP SCREEN -->
+        <div id="setup-screen" class="space-y-6">
+            <div class="text-center">
+                <h2 class="text-2xl font-bold text-teal-400 mb-2">Chọn Chế Độ Chơi</h2>
+                <p class="text-slate-300 text-sm">Bộ đề ôn tập Chương 4 gồm 90 câu: trắc nghiệm, đúng/sai và trả lời ngắn.</p>
+            </div>
+
+            <!-- Mode Selector Buttons -->
+            <div class="flex justify-center space-x-4">
+                <button id="btn-mode-group" onclick="setGameMode('group')" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-blue-600 text-white shadow-lg transition flex items-center space-x-2">
+                    <i class="fa-solid fa-users"></i> <span>Đấu Đội / Nhiều Người</span>
+                </button>
+                <button id="btn-mode-single" onclick="setGameMode('single')" class="px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-700 text-slate-300 shadow-lg transition flex items-center space-x-2">
+                    <i class="fa-solid fa-user-graduate"></i> <span>Kiểm Tra Cá Nhân (Đấu đơn)</span>
+                </button>
+            </div>
+
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-4 max-w-md mx-auto">
+                <h3 id="setup-subtitle" class="text-center font-semibold text-teal-300 text-sm">Thiết lập thông tin các đội chơi</h3>
+                <div id="participant-inputs" class="space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">1</span>
+                        <input type="text" value="Đội 1" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 font-semibold text-sm" placeholder="Nhập tên...">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-purple-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">2</span>
+                        <input type="text" value="Đội 2" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 font-semibold text-sm" placeholder="Nhập tên...">
+                    </div>
+                </div>
+
+                <div id="add-team-box" class="flex justify-center pt-2">
+                    <button onclick="addParticipantInput()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg font-semibold text-xs transition flex items-center space-x-1">
+                        <i class="fa-solid fa-plus"></i> <span id="add-btn-text">Thêm đội</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button onclick="startGame()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-lg px-8 py-3 rounded-xl shadow-lg transform transition hover:scale-105">
+                    Bắt Đầu Ngay (90 Câu)!
+                </button>
+            </div>
+        </div>
+
+        <!-- GAMEPLAY SCREEN -->
+        <div id="game-screen" class="hidden space-y-6">
+            <div class="flex flex-wrap justify-between items-center bg-slate-900/60 p-4 rounded-xl border border-slate-700">
+                <div class="flex items-center space-x-3 mb-2 sm:mb-0">
+                    <span id="turn-label" class="text-xs uppercase tracking-wider text-slate-400">Thí sinh:</span>
+                    <span id="current-participant-badge" class="bg-blue-600 text-white font-bold px-3 py-1 rounded-full text-sm shadow">Bạn</span>
+                </div>
+                <div class="text-sm font-semibold text-teal-300">
+                    Câu hỏi <span id="current-q-num">1</span> / <span id="total-q-num">90</span>
+                </div>
+                <div class="flex items-center space-x-2 text-slate-400 font-medium text-xs sm:text-sm">
+                    <i class="fa-regular fa-clock text-teal-400"></i>
+                    <span>Tự do làm bài</span>
+                </div>
+            </div>
+
+            <div id="scoreboard-mini" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center"></div>
+
+            <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-700 shadow-inner">
+                <div id="question-badge" class="inline-block text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded bg-teal-800 text-teal-200 mb-2"></div>
+                <h3 id="question-text" class="text-lg md:text-xl font-bold text-white leading-relaxed"></h3>
+            </div>
+
+            <div id="options-container" class="space-y-4"></div>
+        </div>
+
+        <!-- FEEDBACK SCREEN -->
+        <div id="feedback-screen" class="hidden space-y-6 text-center py-4">
+            <div id="feedback-icon" class="text-6xl mb-2"></div>
+            <h3 id="feedback-title" class="text-2xl font-bold"></h3>
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 text-left max-w-2xl mx-auto">
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Hướng dẫn giải thích đáp án:</p>
+                <p id="feedback-rationale" class="text-slate-200 text-sm md:text-base"></p>
+            </div>
+            <div>
+                <button onclick="nextQuestion()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
+                    Tiếp Tục <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- END GAME SCREEN -->
+        <div id="end-screen" class="hidden space-y-6 text-center py-6">
+            <div class="text-6xl text-yellow-400 mb-2">
+                <i class="fa-solid fa-trophy animate-bounce"></i>
+            </div>
+            <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500">
+                KẾT QUẢ BÀI THI TỔNG HỢP
+            </h2>
+            <p id="end-subtitle" class="text-slate-300">Đã hoàn thành toàn bộ 90 câu hỏi!</p>
+
+            <div id="final-scoreboard" class="max-w-md mx-auto space-y-3"></div>
+
+            <div class="pt-4">
+                <button onclick="restartGame()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg transition transform hover:scale-105">
+                    Làm Lại Từ Đầu
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="w-full max-w-4xl text-center text-xs text-slate-400 my-2">
+        Trò chơi học tập Hóa học 12 - Chương 4: Polymer và vật liệu polymer (Sách Kết nối tri thức)
+    </footer>
+
+    <script>
+        // Web Audio API phát âm thanh sinh động khi tương tác
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playCorrectSound() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const notes = [523.25, 659.25, 783.99]; // Âm vang tươi vui (C5 -> E5 -> G5)
+                notes.forEach((freq, index) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + index * 0.1);
+                    gain.gain.setValueAtTime(0.18, now + index * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.1 + 0.28);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + index * 0.1);
+                    osc.stop(now + index * 0.1 + 0.28);
+                });
+            } catch (e) {
+                console.log("Audio error", e);
+            }
+        }
+
+        function playIncorrectSound() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const freqs = [174.61, 138.59]; // Âm báo sai trầm (F3 -> C#3)
+                freqs.forEach((freq, index) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, now + index * 0.15);
+                    gain.gain.setValueAtTime(0.2, now + index * 0.15);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.15 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + index * 0.15);
+                    osc.stop(now + index * 0.15 + 0.25);
+                });
+            } catch (e) {
+                console.log("Audio error", e);
+            }
+        }
+
+        // Ngân hàng 90 câu hỏi ôn tập Chương 4 theo phiếu PDF được cung cấp
+        const originalQuestions = [
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 1 [Bài 12: Đại cương về polymer - NB]. Polymer là những hợp chất có đặc điểm nào sau đây?",
+                        "options": [
+                                    {
+                                                "text": "A. Có phân tửkhối nhỏvà cấu trúc đơn giản.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Có phân tửkhối rất lớn do nhiều đơn vịnhỏ(mắt xích) liên kết với nhau tạo nên.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Luôn tan tốt trong nước ởđiều kiện thường.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Có nhiệt độnóng chảy cốđịnh và xác định.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 2 [Bài 12: Đại cương về polymer - NB]. Các phân tửnhỏphản ứng với nhau đểtạo thành polymer được gọi là:",
+                        "options": [
+                                    {
+                                                "text": "A. Mắt xích.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Monomer.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Chất dẻo.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Cốt hạt.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 3 [Bài 12: Đại cương về polymer - NB]. Công thức cấu tạo của Polyethylene (PE) là:",
+                        "options": [
+                                    {
+                                                "text": "A. −[CH2 −CH2]−n.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "B. −[CH2 −CH(Cl)]−n.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. −[CH2 −CH(C6H5)]−n.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. −[NH −[CH2]5 −CO]−n.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: A. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 4 [Bài 12: Đại cương về polymer - NB]. Polymer nào sau đây có tính chất đặc trưng là tính đàn hồi?",
+                        "options": [
+                                    {
+                                                "text": "A. Polyethylene (PE).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Polyisoprene.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Capron.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Poly(vinyl chloride).",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 5 [Bài 12: Đại cương về polymer - NB]. Polymer bịnóng chảy khi đun nóng được gọi là:",
+                        "options": [
+                                    {
+                                                "text": "A. Polymer nhiệt rắn.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Polymer nhiệt dẻo.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Polymer bán dẫn.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Polymer mạng không gian.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 6 [Bài 12: Đại cương về polymer - NB]. Trong phản ứng lưu hóa cao su, các mạch polymer được nối với nhau bằng loại cầu nối nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Cầu nối ester.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Cầu nối disulfide (−S −S−).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Cầu nối peptide.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Cầu nối glycoside.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 7 [Bài 12: Đại cương về polymer - NB]. Điều kiện vềmặt cấu tạo của monomer đểtham gia phản ứng trùng hợp là thường phải có:",
+                        "options": [
+                                    {
+                                                "text": "A. Nhóm carboxyl (−COOH).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Liên kết đôi hoặc vòng kém bền.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Hai nhóm hydroxyl (−OH).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Vòng benzene bền vững.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 8 [Bài 12: Đại cương về polymer - NB]. Phản ứng tổng hợp Nylon-6,6 từadipic acid và hexamethylenediamine thuộc loại phản ứng nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Phản ứng trùng hợp.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Phản ứng trùng ngưng.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Phản ứng cắt mạch polymer.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Phản ứng xà phòng hóa. 1 B. Mức độThông hiểu",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 9 [Bài 12: Đại cương về polymer - TH]. Khi đun nóng polystyrene ởnhiệt độcao, thu được monomer ban đầu là styrene. Phản ứng này thuộc loại:",
+                        "options": [
+                                    {
+                                                "text": "A. Phản ứng tăng mạch polymer.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Phản ứng cắt mạch polymer.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Phản ứng giữnguyên mạch polymer.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Phản ứng trùng ngưng.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 10 [Bài 12: Đại cương về polymer - TH]. Cho phản ứng: Poly(vinyl acetate) + NaOH →Poly(vinyl alcohol) + CH3COONa. Phản ứng này thuộc loại nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Phản ứng cắt mạch polymer.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Phản ứng giữnguyên mạch polymer.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Phản ứng tăng mạch polymer.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Phản ứng trùng ngưng.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 11 [Bài 12: Đại cương về polymer - TH]. Phát biểu nào sau đây đúng vềtính chất vật lí chung của polymer?",
+                        "options": [
+                                    {
+                                                "text": "A. Hầu hết polymer là chất lỏng, dễbay hơi ởnhiệt độphòng.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Hầu hết polymer là chất rắn, không bay hơi, nóng chảy ởmột khoảng nhiệt độkhá rộng.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Mọi polymer đều tan tốt trong nước ởnhiệt độthường.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tất cảcác polymer đều dẫn điện tốt.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 12 [Bài 12: Đại cương về polymer - TH]. Chất nào sau đây không có khảnăng tham gia phản ứng trùng hợp?",
+                        "options": [
+                                    {
+                                                "text": "A. Ethylene (CH2 = CH2).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Vinyl chloride (CH2 = CH-Cl).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. Ethane (CH3 −CH3).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "D. Styrene (CH2 = CH −C6H5).",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: C. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 13 [Bài 12: Đại cương về polymer - TH]. Polymer nào sau đây thuộc loại polyamide và được điều chếbằng phản ứng trùng ngưng?",
+                        "options": [
+                                    {
+                                                "text": "A. Polyethylene.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Nylon-6,6.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Polystyrene.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Polybuta-1,3-diene.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 14 [Bài 12: Đại cương về polymer - TH]. Điểm khác biệt cốt lõi giữa phản ứng trùng ngưng và phản ứng trùng hợp là phản ứng trùng ngưng:",
+                        "options": [
+                                    {
+                                                "text": "A. Không làm thay đổi khối lượng phân tử.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Có sựgiải phóng các phân tửnhỏkhác (như nước).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Yêu cầu monomer phải chứa liên kết đôi.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Chỉtạo ra sản phẩm là chất dẻo. C. Mức độVận dụng",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 15 [Bài 12: Đại cương về polymer - VD]. Cho các polymer: PE, PVC, capron, nylon-6,6. Nhóm các polymer có đặc tính dai, bền, dễkéo sợi là:",
+                        "options": [
+                                    {
+                                                "text": "A. PE và PVC.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Capron và nylon-6,6.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. PE và capron.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. PVC và nylon-6,6.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 16 [Bài 12: Đại cương về polymer - VD]. Mắt xích của polymer thu được khi trùng hợp propylene (CH2 = CH −CH3) là:",
+                        "options": [
+                                    {
+                                                "text": "A. −[CH2 −CH2]−.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. −[CH2 −CH(CH3)]−.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. −[CH2 −CH(Cl)]−.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. −[CH2 −CH = CH −CH2]−.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 17 [Bài 12: Đại cương về polymer - VD]. Thủy phân hoàn toàn tinh bột hoặc cellulose thu được monomer là:",
+                        "options": [
+                                    {
+                                                "text": "A. Fructose.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Glucose.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Amino acid.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Glycerol.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 18 [Bài 12: Đại cương về polymer - VD]. Monomer được dùng đểtổng hợp Poly(vinyl chloride) (PVC) có tên gọi và công thức là: 2",
+                        "options": [
+                                    {
+                                                "text": "A. Ethylene (CH2 = CH2).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Vinyl chloride (CH2 = CH-Cl).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Styrene (CH2 = CH −C6H5).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Propylene (CH2 = CH −CH3). D. Mức độVận dụng cao",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VDC",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 19 [Bài 12: Đại cương về polymer - VDC]. Trùng hợp n mol monomer vinyl chloride (M = 62, 5 g/mol) thu được một đoạn mạch PVC có phân tửkhối bằng 125.000 amu. Sốmắt xích (n) trong đoạn mạch PVC này là:",
+                        "options": [
+                                    {
+                                                "text": "A. 1000.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. 2000.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. 1500.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. 2500.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VDC",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 20 [Bài 12: Đại cương về polymer - VDC]. Tiến hành trùng hợp 100 kg ethylene với hiệu suất phản ứng đạt 80%. Khối lượng Polyethylene (PE) thu được là:",
+                        "options": [
+                                    {
+                                                "text": "A. 100 kg.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. 80 kg.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. 125 kg.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. 64 kg.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "tf",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 21 [Bài 12: Đại cương về polymer - NB - Đúng/Sai]. Xét khái niệm polymer: 'Polymer là hợp chất có phân tử khối rất lớn gồm nhiều mắt xích liên kết với nhau.'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Đây là đặc điểm khái quát của polymer."
+            },
+            {
+                        "type": "tf",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 22 [Bài 12: Đại cương về polymer - NB - Đúng/Sai]. Xét danh pháp: 'Monomer là đơn vị nhỏ phản ứng với nhau để tạo polymer.'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Monomer là phân tử nhỏ tham gia tạo polymer."
+            },
+            {
+                        "type": "tf",
+                        "level": "TH",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 23 [Bài 12: Đại cương về polymer - TH - Đúng/Sai]. Xét nylon-6,6: 'Nylon-6,6 được tổng hợp bằng phản ứng trùng hợp.'",
+                        "correctBool": false,
+                        "rationale": "Sai. Nylon-6,6 được điều chế bằng phản ứng trùng ngưng."
+            },
+            {
+                        "type": "tf",
+                        "level": "VD",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 24 [Bài 12: Đại cương về polymer - VD - Đúng/Sai]. Xét phản ứng polymer: 'Thủy phân polyamide trong môi trường acid có thể làm đứt mạch polymer.'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Thủy phân polyamide là phản ứng cắt mạch."
+            },
+            {
+                        "type": "tf",
+                        "level": "VDC",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 25 [Bài 12: Đại cương về polymer - VDC - Đúng/Sai]. Xét PE: 'Trùng hợp ethylene tạo polyethylene và nếu hiệu suất 80% từ 100 kg ethylene thì thu được 80 kg PE.'",
+                        "correctBool": true,
+                        "rationale": "Đúng theo dữ kiện và hiệu suất phản ứng."
+            },
+            {
+                        "type": "sa",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 26 [Bài 12: Đại cương về polymer - NB - Trả lời ngắn]. Nêu tên gọi chung của hợp chất có phân tử khối rất lớn do nhiều mắt xích liên kết.",
+                        "correctAnswer": "polymer",
+                        "rationale": "Polymer."
+            },
+            {
+                        "type": "sa",
+                        "level": "NB",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 27 [Bài 12: Đại cương về polymer - NB - Trả lời ngắn]. Viết công thức phân tử của monomer ethylene dùng điều chế PE.",
+                        "correctAnswer": "C2H4",
+                        "rationale": "Ethylene có công thức C₂H₄ (CH₂=CH₂)."
+            },
+            {
+                        "type": "sa",
+                        "level": "TH",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 28 [Bài 12: Đại cương về polymer - TH - Trả lời ngắn]. Nêu tên loại cầu nối hình thành khi lưu hóa cao su bằng lưu huỳnh.",
+                        "correctAnswer": "disulfide",
+                        "rationale": "Cầu nối disulfide (–S–S–)."
+            },
+            {
+                        "type": "sa",
+                        "level": "VD",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 29 [Bài 12: Đại cương về polymer - VD - Trả lời ngắn]. Thủy phân hoàn toàn tinh bột trong môi trường acid thu được chất nào?",
+                        "correctAnswer": "glucose",
+                        "rationale": "Sản phẩm thủy phân hoàn toàn là glucose."
+            },
+            {
+                        "type": "sa",
+                        "level": "VDC",
+                        "lesson": "Bài 12: Đại cương về polymer",
+                        "question": "Câu 30 [Bài 12: Đại cương về polymer - VDC - Trả lời ngắn]. Đoạn mạch PE có n = 5000. Tính phân tử khối, biết mắt xích C₂H₄ có M = 28.",
+                        "correctAnswer": "140000",
+                        "rationale": "M = 5000 × 28 = 140000 amu."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 31 [Bài 13: Vật liệu polymer - NB]. Vật liệu polymer có tính dẻo được gọi là:",
+                        "options": [
+                                    {
+                                                "text": "A. Cao su.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Tơ.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. Chất dẻo.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "D. Keo dán.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: C. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 32 [Bài 13: Vật liệu polymer - NB]. Vật liệu polymer nào sau đây được ứng dụng đểsản xuất thủy tinh hữu cơ làm kính máy bay, kính bảo hộ?",
+                        "options": [
+                                    {
+                                                "text": "A. Polyethylene (PE).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Poly(methyl methacrylate).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Poly(vinyl chloride) (PVC).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Polystyrene (PS).",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 33 [Bài 13: Vật liệu polymer - NB]. Thành phần của vật liệu composite gồm hai phần chính là:",
+                        "options": [
+                                    {
+                                                "text": "A. Chất dẻo và chất màu.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Vật liệu cốt và vật liệu nền.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Cao su và lưu huỳnh.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tơ và keo dán.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 34 [Bài 13: Vật liệu polymer - NB]. Loại tơ nào sau đây có nguồn gốc từtựnhiên?",
+                        "options": [
+                                    {
+                                                "text": "A. Tơ nylon-6,6.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Tơ tằm.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Tơ visco.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tơ nitron.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 35 [Bài 13: Vật liệu polymer - NB]. Tơ visco và tơ cellulose acetate thuộc nhóm tơ nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Tơ tựnhiên.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Tơ tổng hợp.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. Tơ bán tổng hợp (tơ nhân tạo).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "D. Tơ polyamide.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: C. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 36 [Bài 13: Vật liệu polymer - NB]. Cao su tựnhiên được khai thác chính từmủcủa loại cây nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Cây thông.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Cây cao su (Hevea brasiliensis).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Cây keo.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Cây bạch đàn.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 37 [Bài 13: Vật liệu polymer - NB]. Các mắt xích isoprene trong cấu tạo của cao su tựnhiên đều ởdạng cấu hình nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Dạng trans.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Dạng cis.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Dạng vòng.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Dạng nhánh. 4",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 38 [Bài 13: Vật liệu polymer - NB]. Loại keo dán nào được điều chếbằng phản ứng trùng ngưng giữa urea và formaldehyde?",
+                        "options": [
+                                    {
+                                                "text": "A. Nhựa vá săm.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Keo dán epoxy.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. Keo dán poly(urea-formaldehyde).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "D. Keo dán silicone. B. Mức độThông hiểu",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: C. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 39 [Bài 13: Vật liệu polymer - TH]. Polymer nào sau đây thường được dùng đểsản xuất hộp xốp, bao gói thực phẩm và vật liệu cách nhiệt?",
+                        "options": [
+                                    {
+                                                "text": "A. PE.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. PP.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. PS (Polystyrene).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "D. PVC.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: C. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 40 [Bài 13: Vật liệu polymer - TH]. Loại tơ nào sau đây được dệt từmonomer acrylonitrile (vinyl cyanide) và có khả năng giữnhiệt tốt nên dùng làm quần áo ấm?",
+                        "options": [
+                                    {
+                                                "text": "A. Tơ capron.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Tơ nitron (olon).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Tơ nylon-6,6.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tơ visco.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 41 [Bài 13: Vật liệu polymer - TH]. Quá trình lưu hóa cao su bằng đun nóng với lưu huỳnh làm tăng độbền, tính đàn hồi và khảnăng chịu nhiệt là do tạo ra:",
+                        "options": [
+                                    {
+                                                "text": "A. Mạch nhánh ngắn.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Mạch mạng lưới không gian với cầu nối disulfide.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Phân tửkhối nhỏhơn.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Liên kết ion giữa các chuỗi.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 42 [Bài 13: Vật liệu polymer - TH]. Vật liệu composite cốt sợi thủy tinh thường được ứng dụng đểsản xuất:",
+                        "options": [
+                                    {
+                                                "text": "A. Hộp xốp đựng cơm.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Thân vỏmáy bay, tàu thuyền, bồn chứa.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Quần áo may mặc ấm.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Khung kính đeo mắt.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 43 [Bài 13: Vật liệu polymer - TH]. Cao su buna-S là sản phẩm trùng hợp giữa buta-1,3-diene với monomer nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Acrylonitrile.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Styrene.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Vinyl chloride.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Isoprene.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 44 [Bài 13: Vật liệu polymer - TH]. Keo dán epoxy gồm hai thành phần chính là:",
+                        "options": [
+                                    {
+                                                "text": "A. Cao su và xăng.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Hợp chất chứa hai nhóm epoxy và chất đóng rắn là các amine.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Urea và formaldehyde.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Cellulose và acetic anhydride. C. Mức độVận dụng",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 45 [Bài 13: Vật liệu polymer - VD]. Đểlàm ống cấp thoát nước, ván nhựa, vỏcáp điện, người ta thường ưu tiên sử dụng loại chất dẻo nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Polyethylene (PE).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Poly(vinyl chloride) (PVC).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Polystyrene (PS).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Poly(methyl methacrylate).",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 46 [Bài 13: Vật liệu polymer - VD]. Tơ nylon-6,6 thuộc loại tơ polyamide có đặc tính dai, mềm, ít thấm nước, được tổng hợp từhai monomer là:",
+                        "options": [
+                                    {
+                                                "text": "A. Acrylonitrile và vinyl chloride.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Hexamethylenediamine và adipic acid.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Caprolactam và formaldehyde.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Phenol và formaldehyde. 5",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 47 [Bài 13: Vật liệu polymer - VD]. Cho các loại tơ: sợi bông, tơ tằm, tơ visco, tơ nylon-6,6, tơ nitron. Sốtơ thuộc nhóm tơ tổng hợp là:",
+                        "options": [
+                                    {
+                                                "text": "A. 2 (Tơ nylon-6,6, tơ nitron).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "B. 3.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. 4.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. 1.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: A. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 48 [Bài 13: Vật liệu polymer - VD]. Nhựa vá săm xe là một loại keo dán dạng dung dịch keo được tạo thành do:",
+                        "options": [
+                                    {
+                                                "text": "A. Trùng ngưng urea với formaldehyde.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Hòa tan cao su trong dung môi hữu cơ (xăng, toluene...).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Trùng hợp methyl methacrylate.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Lưu hóa cao su bằng lưu huỳnh. D. Mức độVận dụng cao",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VDC",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 49 [Bài 13: Vật liệu polymer - VDC]. Trùng hợp buta-1,3-diene thu được cao su buna. Nếu trùng hợp 54 kg buta-1,3- diene thu được 43, 2 kg cao su buna. Hiệu suất của phản ứng trùng hợp là:",
+                        "options": [
+                                    {
+                                                "text": "A. 70%.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. 80%.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. 85%.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. 90%.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VDC",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 50 [Bài 13: Vật liệu polymer - VDC]. Phân tích rác thải nhựa tiêu dùng cho thấy sựtích tụnguy hại lâu dài. Nguyên nhân chính khiến chất dẻo gây ô nhiễm môi trường suy thoái đất và nguồn nước là do:",
+                        "options": [
+                                    {
+                                                "text": "A. Chất dẻo có chứa liên kết ion kém bền.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Rác thải nhựa rất khó phân hủy sinh học tựnhiên (cần hàng trăm năm).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Chất dẻo dễbịtan hoàn toàn trong nước mưa.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Chất dẻo bịphân hủy quá nhanh thành chất độc.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "tf",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 51 [Bài 13: Vật liệu polymer - NB - Đúng/Sai]. Xét chất dẻo: 'PE có thể được dùng sản xuất túi và màng bọc thực phẩm.'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Đây là ứng dụng thông dụng của PE."
+            },
+            {
+                        "type": "tf",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 52 [Bài 13: Vật liệu polymer - NB - Đúng/Sai]. Xét tơ: 'Tơ tằm là tơ tự nhiên có thành phần chính là protein.'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Tơ tằm có bản chất protein."
+            },
+            {
+                        "type": "tf",
+                        "level": "TH",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 53 [Bài 13: Vật liệu polymer - TH - Đúng/Sai]. Xét cao su: 'Lưu hóa cao su bằng lưu huỳnh làm giảm độ bền và tính đàn hồi.'",
+                        "correctBool": false,
+                        "rationale": "Sai. Lưu hóa thường làm tăng độ bền, đàn hồi và khả năng chịu nhiệt."
+            },
+            {
+                        "type": "tf",
+                        "level": "VD",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 54 [Bài 13: Vật liệu polymer - VD - Đúng/Sai]. Xét composite: 'Vật liệu composite gồm vật liệu nền và vật liệu cốt.'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Đây là hai thành phần cơ bản của composite."
+            },
+            {
+                        "type": "tf",
+                        "level": "VDC",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 55 [Bài 13: Vật liệu polymer - VDC - Đúng/Sai]. Xét tơ nitron: 'Tơ nitron được điều chế từ acrylonitrile (vinyl cyanide).'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Acrylonitrile là monomer tạo tơ nitron."
+            },
+            {
+                        "type": "sa",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 56 [Bài 13: Vật liệu polymer - NB - Trả lời ngắn]. Vật liệu polymer có tính dẻo làm thành phần chính được gọi là gì?",
+                        "correctAnswer": "chất dẻo",
+                        "rationale": "Chất dẻo."
+            },
+            {
+                        "type": "sa",
+                        "level": "NB",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 57 [Bài 13: Vật liệu polymer - NB - Trả lời ngắn]. Nêu tên tơ tự nhiên lấy từ kén tằm, có cấu trúc protein.",
+                        "correctAnswer": "tơ tằm",
+                        "rationale": "Tơ tằm."
+            },
+            {
+                        "type": "sa",
+                        "level": "TH",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 58 [Bài 13: Vật liệu polymer - TH - Trả lời ngắn]. Kể tên chất được đun nóng với cao su tự nhiên trong quá trình lưu hóa.",
+                        "correctAnswer": "lưu huỳnh",
+                        "rationale": "Lưu huỳnh."
+            },
+            {
+                        "type": "sa",
+                        "level": "VD",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 59 [Bài 13: Vật liệu polymer - VD - Trả lời ngắn]. Nêu tên monomer dùng để điều chế tơ nitron (olon).",
+                        "correctAnswer": "acrylonitrile",
+                        "rationale": "Acrylonitrile, còn gọi là vinyl cyanide."
+            },
+            {
+                        "type": "sa",
+                        "level": "VDC",
+                        "lesson": "Bài 13: Vật liệu polymer",
+                        "question": "Câu 60 [Bài 13: Vật liệu polymer - VDC - Trả lời ngắn]. Từ 106 kg acrylonitrile, hiệu suất trùng hợp 90%, khối lượng tơ nitron thu được là bao nhiêu kg?",
+                        "correctAnswer": "95.4",
+                        "rationale": "Khối lượng lý thuyết bằng 106 kg; thực tế = 106 × 90% = 95,4 kg."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 61 [Bài 14: Ôn tập chương 4 - NB]. Nhóm vật liệu polymer nào sau đây có tính dẻo đặc trưng?",
+                        "options": [
+                                    {
+                                                "text": "A. Cao su.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Chất dẻo.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Tơ.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Keo dán.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 62 [Bài 14: Ôn tập chương 4 - NB]. Tơ tổng hợp nào sau đây được chếtạo từphản ứng trùng hợp vinyl cyanide?",
+                        "options": [
+                                    {
+                                                "text": "A. Tơ capron.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Tơ nitron.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Tơ nylon-6,6.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tơ visco.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 63 [Bài 14: Ôn tập chương 4 - NB]. Loại vật liệu polymer nào có khảnăng kết dính bềmặt hai vật liệu rắn mà không làm biến đổi bản chất các vật liệu đó?",
+                        "options": [
+                                    {
+                                                "text": "A. Chất dẻo.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Keo dán.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Cao su.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Composite.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 64 [Bài 14: Ôn tập chương 4 - NB]. Phản ứng xà phòng hóa poly(vinyl acetate) tạo poly(vinyl alcohol) thuộc loại phản ứng biến đổi mạch polymer nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Phản ứng cắt mạch.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Phản ứng giữnguyên mạch.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Phản ứng tăng mạch.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Phản ứng trùng ngưng.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 65 [Bài 14: Ôn tập chương 4 - NB]. Vật liệu composite được cấu tạo bởi hai thành phần cơ bản là:",
+                        "options": [
+                                    {
+                                                "text": "A. Mắt xích và monomer.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Vật liệu nền và vật liệu cốt.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Chất dẻo và tơ.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Cao su và lưu huỳnh.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 66 [Bài 14: Ôn tập chương 4 - NB]. Phản ứng thủy phân polyamide trong môi trường acid là ví dụvềloại phản ứng nào của polymer?",
+                        "options": [
+                                    {
+                                                "text": "A. Phản ứng tăng mạch.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Phản ứng cắt mạch.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Phản ứng giữnguyên mạch.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Phản ứng trùng hợp.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 67 [Bài 14: Ôn tập chương 4 - NB]. Nhóm tơ nào sau đây là tơ bán tổng hợp (tơ nhân tạo)?",
+                        "options": [
+                                    {
+                                                "text": "A. Sợi bông, tơ tằm. 7",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Tơ visco, tơ cellulose acetate.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Tơ nylon-6,6, tơ nitron.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tơ capron, tơ nhện.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 68 [Bài 14: Ôn tập chương 4 - NB]. Đun nóng cao su với lưu huỳnh tạo cầu nối disulfide thuộc loại phản ứng biến đổi mạch polymer nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Phản ứng cắt mạch.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Phản ứng tăng mạch.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Phản ứng giữnguyên mạch.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Phản ứng phân hủy. B. Mức độThông hiểu",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 69 [Bài 14: Ôn tập chương 4 - TH]. Cho các polymer: PE, PP, PVC, PS, Poly(phenol formaldehyde). Nhóm polymer tổng hợp bằng phương pháp trùng hợp là:",
+                        "options": [
+                                    {
+                                                "text": "A. PE, PP, PVC, PS.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "B. Chỉcó PE và PP.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. PE, PP và Poly(phenol formaldehyde).",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tất cảcác polymer trên.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: A. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 70 [Bài 14: Ôn tập chương 4 - TH]. Khẳng định nào sau đây đúng vềtính chất của tơ?",
+                        "options": [
+                                    {
+                                                "text": "A. Mọi loại tơ đều được điều chếbằng phản ứng trùng ngưng.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Tơ là các vật liệu polymer dạng sợi mảnh, dai, bền, mạch không phân nhánh.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Tơ tựnhiên không bịphân hủy bởi sinh học.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tơ tổng hợp không thểkéo sợi.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 71 [Bài 14: Ôn tập chương 4 - TH]. Đểthu được keo dán poly(urea-formaldehyde), người ta thực hiện phản ứng trùng ngưng giữa hai chất nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Formaldehyde và phenol.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Urea và formaldehyde.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Adipic acid và hexamethylenediamine.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Ethylene và vinyl chloride.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 72 [Bài 14: Ôn tập chương 4 - TH]. Khi so sánh cao su tựnhiên và cao su lưu hóa, cao su lưu hóa có điểm ưu việt hơn là:",
+                        "options": [
+                                    {
+                                                "text": "A. Dễbịtan hơn trong xăng.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Độbền, tính đàn hồi và khảnăng chịu nhiệt cao hơn.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Giảm khối lượng phân tử.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Mạch không liên kết với nhau.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 73 [Bài 14: Ôn tập chương 4 - TH]. Monomer dùng đểsản xuất chất dẻo PE (Polyethylene) bằng phản ứng trùng hợp là:",
+                        "options": [
+                                    {
+                                                "text": "A. Vinyl chloride.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Ethylene (CH2 = CH2).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Propylene.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Styrene.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "TH",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 74 [Bài 14: Ôn tập chương 4 - TH]. Polymer nào sau đây thuộc loại polymer thiên nhiên (có sẵn trong tựnhiên)?",
+                        "options": [
+                                    {
+                                                "text": "A. Polyethylene.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Cellulose.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Nylon-6,6.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. PVC. C. Mức độVận dụng",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 75 [Bài 14: Ôn tập chương 4 - VD]. Cho dãy các vật liệu: tơ tằm, tơ nylon-6,6, tơ visco, tơ nitron, tơ capron. Sốvật liệu thuộc loại tơ tổng hợp là:",
+                        "options": [
+                                    {
+                                                "text": "A. 2.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. 3 (Tơ nylon-6,6, tơ nitron, tơ capron).",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. 4.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. 1.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 76 [Bài 14: Ôn tập chương 4 - VD]. Sắp xếp đúng các polymer sau vào nhóm phương pháp tổng hợp tương ứng: • Nhóm 1 (Trùng hợp): PE, PVC, Cao su buna, Tơ nitron. • Nhóm 2 (Trùng ngưng): Nylon-6,6, Poly(phenol formaldehyde). 8 Phát biểu này là:",
+                        "options": [
+                                    {
+                                                "text": "A. Đúng.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "B. Sai vì Nylon-6,6 là trùng hợp.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. Sai vì PE là trùng ngưng.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Sai vì Tơ nitron là trùng ngưng.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: A. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 77 [Bài 14: Ôn tập chương 4 - VD]. Đểchếtạo thân xe đua, khung xe đạp nhẹvà siêu bền, người ta sửdụng loại vật liệu nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Chất dẻo PE đơn thuần.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Vật liệu composite cốt sợi carbon.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Cao su lưu hóa chưa chếbiến.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tơ tằm tựnhiên.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VD",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 78 [Bài 14: Ôn tập chương 4 - VD]. Thủy phân hoàn toàn 1 mol nylon-6,6 trong môi trường acid thu được các monomer ban đầu là:",
+                        "options": [
+                                    {
+                                                "text": "A. Acrylonitrile và vinyl chloride.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Adipic acid và hexamethylenediamine.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Formaldehyde và urea.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Glucose và fructose. D. Mức độVận dụng cao",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VDC",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 79 [Bài 14: Ôn tập chương 4 - VDC]. Trùng ngưng 14, 6 kg adipic acid và 11, 6 kg hexamethylenediamine thu được 22, 6 kg tơ nylon-6,6 và m kg nước. Khối lượng m nước giải phóng là:",
+                        "options": [
+                                    {
+                                                "text": "A. 3, 6 kg.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "B. 1, 8 kg.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "C. 2, 0 kg.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. 4, 0 kg.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: A. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "mcq",
+                        "level": "VDC",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 80 [Bài 14: Ôn tập chương 4 - VDC]. Phân tích sơ đồchuyển hóa: Cellulose phản ứng hóa học −−−−−−−−−−−→Tơ X Tơ X thu được thuộc nhóm tơ nào và ví dụđiển hình là tơ nào?",
+                        "options": [
+                                    {
+                                                "text": "A. Tơ tựnhiên – Sợi bông.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "B. Tơ bán tổng hợp (nhân tạo) – Tơ visco hoặc tơ cellulose acetate.",
+                                                "isCorrect": true
+                                    },
+                                    {
+                                                "text": "C. Tơ tổng hợp – Tơ nylon-6,6.",
+                                                "isCorrect": false
+                                    },
+                                    {
+                                                "text": "D. Tơ tổng hợp – Tơ nitron.",
+                                                "isCorrect": false
+                                    }
+                        ],
+                        "rationale": "Đáp án đúng: B. Nội dung theo phiếu ôn tập Chương 4."
+            },
+            {
+                        "type": "tf",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 81 [Bài 14: Ôn tập chương 4 - NB - Đúng/Sai]. Xét phản ứng polymer: 'Phản ứng cắt mạch làm giảm độ dài mạch polymer hoặc tạo các phân tử nhỏ hơn.'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Đây là đặc trưng của phản ứng cắt mạch."
+            },
+            {
+                        "type": "tf",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 82 [Bài 14: Ôn tập chương 4 - NB - Đúng/Sai]. Xét vật liệu: 'Keo dán có khả năng kết dính bề mặt hai vật liệu rắn.'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Keo dán tạo liên kết giữa các bề mặt."
+            },
+            {
+                        "type": "tf",
+                        "level": "TH",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 83 [Bài 14: Ôn tập chương 4 - TH - Đúng/Sai]. Xét tổng hợp polymer: 'Polyethylene được điều chế bằng phản ứng trùng ngưng.'",
+                        "correctBool": false,
+                        "rationale": "Sai. PE được tổng hợp bằng phản ứng trùng hợp ethylene."
+            },
+            {
+                        "type": "tf",
+                        "level": "VD",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 84 [Bài 14: Ôn tập chương 4 - VD - Đúng/Sai]. Xét composite: 'Composite chỉ chứa duy nhất một loại chất dẻo, không có vật liệu cốt.'",
+                        "correctBool": false,
+                        "rationale": "Sai. Composite có cả vật liệu nền và vật liệu cốt."
+            },
+            {
+                        "type": "tf",
+                        "level": "VDC",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 85 [Bài 14: Ôn tập chương 4 - VDC - Đúng/Sai]. Xét tơ nhân tạo: 'Tơ visco và tơ cellulose acetate thuộc nhóm tơ bán tổng hợp.'",
+                        "correctBool": true,
+                        "rationale": "Đúng. Đây là các tơ nhân tạo từ cellulose."
+            },
+            {
+                        "type": "sa",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 86 [Bài 14: Ôn tập chương 4 - NB - Trả lời ngắn]. Tên gọi của đơn vị nhỏ phản ứng với nhau tạo nên polymer là gì?",
+                        "correctAnswer": "monomer",
+                        "rationale": "Monomer."
+            },
+            {
+                        "type": "sa",
+                        "level": "NB",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 87 [Bài 14: Ôn tập chương 4 - NB - Trả lời ngắn]. Kể tên vật liệu polymer có tính đàn hồi đặc trưng.",
+                        "correctAnswer": "cao su",
+                        "rationale": "Cao su."
+            },
+            {
+                        "type": "sa",
+                        "level": "TH",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 88 [Bài 14: Ôn tập chương 4 - TH - Trả lời ngắn]. Thủy phân polyamide thành amino acid thuộc loại phản ứng biến đổi mạch nào?",
+                        "correctAnswer": "cắt mạch",
+                        "rationale": "Phản ứng cắt mạch polymer."
+            },
+            {
+                        "type": "sa",
+                        "level": "VD",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 89 [Bài 14: Ôn tập chương 4 - VD - Trả lời ngắn]. Nêu hai chất dùng để điều chế keo dán poly(urea-formaldehyde).",
+                        "correctAnswer": "urea và formaldehyde",
+                        "rationale": "Urea và formaldehyde."
+            },
+            {
+                        "type": "sa",
+                        "level": "VDC",
+                        "lesson": "Bài 14: Ôn tập chương 4",
+                        "question": "Câu 90 [Bài 14: Ôn tập chương 4 - VDC - Trả lời ngắn]. Nhiệt phân hoàn toàn 104 kg polystyrene thành styrene. Tổng khối lượng styrene thu được là bao nhiêu kg?",
+                        "correctAnswer": "104",
+                        "rationale": "Theo bảo toàn khối lượng, thu được 104 kg styrene."
+            }
+];
+
+        let questions = [];
+        let participants = [];
+        let gameMode = 'group';
+        let currentIndex = 0;
+        let currentQuestionIndex = 0;
+
+        function setGameMode(mode) {
+            gameMode = mode;
+            const btnGroup = document.getElementById('btn-mode-group');
+            const btnSingle = document.getElementById('btn-mode-single');
+            const subtitle = document.getElementById('setup-subtitle');
+            const container = document.getElementById('participant-inputs');
+            const addTeamBox = document.getElementById('add-team-box');
+
+            if (mode === 'group') {
+                btnGroup.className = "px-6 py-2.5 rounded-xl font-bold text-sm bg-blue-600 text-white shadow-lg transition flex items-center space-x-2";
+                btnSingle.className = "px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-700 text-slate-300 shadow-lg transition flex items-center space-x-2";
+                subtitle.innerText = "Thiết lập thông tin các đội chơi";
+                addTeamBox.style.display = 'flex';
+                container.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">1</span>
+                        <input type="text" value="Đội 1" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 font-semibold text-sm" placeholder="Nhập tên...">
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-purple-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">2</span>
+                        <input type="text" value="Đội 2" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500 font-semibold text-sm" placeholder="Nhập tên...">
+                    </div>
+                `;
+            } else {
+                btnSingle.className = "px-6 py-2.5 rounded-xl font-bold text-sm bg-teal-600 text-white shadow-lg transition flex items-center space-x-2";
+                btnGroup.className = "px-6 py-2.5 rounded-xl font-bold text-sm bg-slate-700 text-slate-300 shadow-lg transition flex items-center space-x-2";
+                subtitle.innerText = "Nhập họ và tên học sinh làm bài";
+                addTeamBox.style.display = 'none';
+                container.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-teal-600 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0"><i class="fa-solid fa-user"></i></span>
+                        <input type="text" value="Nguyễn Văn A" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-teal-500 font-semibold text-sm" placeholder="Họ và tên của bạn...">
+                    </div>
+                `;
+            }
+        }
+
+        function addParticipantInput() {
+            const container = document.getElementById('participant-inputs');
+            const count = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'flex items-center space-x-2';
+            const colorClass = count % 2 === 0 ? 'bg-purple-600' : 'bg-blue-600';
+            div.innerHTML = `
+                <span class="${colorClass} w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm shrink-0">${count}</span>
+                <input type="text" value="Đội ${count}" class="participant-input w-full bg-slate-900 border border-slate-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500 font-semibold text-sm" placeholder="Nhập tên...">
+                <button onclick="this.parentElement.remove()" class="text-red-400 hover:text-red-300 px-2"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        function startGame() {
+            getAudioContext();
+
+            const inputs = document.querySelectorAll('.participant-input');
+            participants = [];
+            inputs.forEach((input, index) => {
+                const name = input.value.trim() || (gameMode === 'group' ? `Đội ${index + 1}` : `Học sinh`);
+                participants.push({ name: name, score: 0, correctCount: 0 });
+            });
+
+            if (participants.length === 0) {
+                alert("Vui lòng nhập tên người làm bài!");
+                return;
+            }
+
+            // Xáo trộn ngẫu nhiên toàn bộ 90 câu hỏi
+            questions = [...originalQuestions].sort(() => Math.random() - 0.5);
+
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('total-q-num').innerText = questions.length;
+            
+            if (gameMode === 'single') {
+                document.getElementById('turn-label').innerText = 'Học sinh:';
+            } else {
+                document.getElementById('turn-label').innerText = 'Lượt của:';
+            }
+
+            currentIndex = 0;
+            currentQuestionIndex = 0;
+            loadQuestion();
+        }
+
+        function updateScoreboardMini() {
+            const container = document.getElementById('scoreboard-mini');
+            container.innerHTML = '';
+            
+            if (gameMode === 'single') {
+                container.style.display = 'none';
+                document.getElementById('current-participant-badge').innerText = participants[0].name;
+            } else {
+                container.style.display = 'grid';
+                participants.forEach((p, idx) => {
+                    const isCurrent = idx === currentIndex;
+                    const div = document.createElement('div');
+                    div.className = `p-2 rounded-lg border ${isCurrent ? 'border-teal-400 bg-teal-950/40 pulse-glow' : 'border-slate-700 bg-slate-900/40'}`;
+                    div.innerHTML = `
+                        <div class="text-xs text-slate-300 truncate font-semibold">${p.name}</div>
+                        <div class="text-lg font-extrabold text-teal-300">${p.score} đ</div>
+                    `;
+                    container.appendChild(div);
+                });
+                document.getElementById('current-participant-badge').innerText = participants[currentIndex].name;
+            }
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            document.getElementById('question-text').innerHTML = q.question;
+
+            // Hiển thị badge phân loại
+            const typeText = q.type === 'mcq' ? 'Trắc nghiệm 4 lựa chọn' : q.type === 'tf' ? 'Câu hỏi Đúng / Sai' : 'Câu hỏi Trả lời ngắn';
+            document.getElementById('question-badge').innerText = `${q.lesson} • Cấp độ: ${q.level} • ${typeText}`;
+
+            updateScoreboardMini();
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            if (q.type === 'mcq') {
+                // Trắc nghiệm 4 lựa chọn
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+
+                let currentOptions = [...q.options].sort(() => Math.random() - 0.5);
+                const letters = ['A', 'B', 'C', 'D'];
+
+                currentOptions.forEach((opt, idx) => {
+                    const cleanText = opt.text.replace(/^[A-D]\.\s*/, '');
+                    const btn = document.createElement('button');
+                    btn.className = 'bg-slate-900/90 hover:bg-slate-700 border border-slate-700 hover:border-blue-500 p-4 rounded-xl text-left transition flex items-start space-x-3 group shadow';
+                    
+                    btn.innerHTML = `
+                        <span class="bg-slate-800 text-teal-400 font-bold px-2.5 py-1 rounded-lg text-sm shrink-0">${letters[idx]}</span>
+                        <span class="text-slate-100 font-medium text-sm md:text-base my-auto">${cleanText}</span>
+                    `;
+
+                    btn.onclick = () => selectAnswer(opt.isCorrect, q.rationale);
+                    gridDiv.appendChild(btn);
+                });
+                optionsContainer.appendChild(gridDiv);
+            } else if (q.type === 'tf') {
+                // Câu hỏi Đúng / Sai
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto pt-2';
+
+                const btnTrue = document.createElement('button');
+                btnTrue.className = 'bg-emerald-900/80 hover:bg-emerald-700 border border-emerald-500 p-5 rounded-2xl text-center font-bold text-xl transition shadow-lg flex items-center justify-center space-x-3';
+                btnTrue.innerHTML = `<i class="fa-solid fa-check text-2xl text-emerald-400"></i> <span>ĐÚNG</span>`;
+                btnTrue.onclick = () => selectAnswer(q.correctBool === true, q.rationale);
+
+                const btnFalse = document.createElement('button');
+                btnFalse.className = 'bg-red-900/80 hover:bg-red-700 border border-red-500 p-5 rounded-2xl text-center font-bold text-xl transition shadow-lg flex items-center justify-center space-x-3';
+                btnFalse.innerHTML = `<i class="fa-solid fa-xmark text-2xl text-red-400"></i> <span>SAI</span>`;
+                btnFalse.onclick = () => selectAnswer(q.correctBool === false, q.rationale);
+
+                gridDiv.appendChild(btnTrue);
+                gridDiv.appendChild(btnFalse);
+                optionsContainer.appendChild(gridDiv);
+            } else if (q.type === 'sa') {
+                // Câu hỏi Trả lời ngắn
+                const boxDiv = document.createElement('div');
+                boxDiv.className = 'max-w-md mx-auto space-y-4 pt-2 text-center';
+                boxDiv.innerHTML = `
+                    <div class="text-xs text-slate-400">Nhập đáp án (chữ số, từ khóa hoặc số thập phân) rồi nhấn Xác nhận:</div>
+                    <div class="flex space-x-2">
+                        <input id="sa-input" type="text" class="w-full bg-slate-900 border border-teal-500 rounded-xl px-4 py-3 text-white text-center font-bold text-lg focus:outline-none focus:ring-2 focus:ring-teal-400" placeholder="Nhập câu trả lời...">
+                        <button id="sa-submit-btn" class="bg-teal-600 hover:bg-teal-500 text-white font-bold px-6 py-3 rounded-xl shadow transition">Gửi</button>
+                    </div>
+                `;
+                optionsContainer.appendChild(boxDiv);
+
+                const inputEl = document.getElementById('sa-input');
+                const submitBtn = document.getElementById('sa-submit-btn');
+
+                const handleSaSubmit = () => {
+                    const userAns = inputEl.value.trim().toLowerCase().replace(/\s+/g, '').replace(',', '.');
+                    const targetAns = q.correctAnswer.trim().toLowerCase().replace(/\s+/g, '').replace(',', '.');
+                    const isCorrect = (userAns === targetAns);
+                    selectAnswer(isCorrect, `${q.rationale} (Đáp án chuẩn: <b>${q.correctAnswer}</b>)`);
+                };
+
+                submitBtn.onclick = handleSaSubmit;
+                inputEl.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') handleSaSubmit();
+                });
+                setTimeout(() => inputEl.focus(), 100);
+            }
+        }
+
+        function selectAnswer(isCorrect, rationaleText) {
+            document.getElementById('game-screen').classList.add('hidden');
+            const feedbackScreen = document.getElementById('feedback-screen');
+            feedbackScreen.classList.remove('hidden');
+
+            const title = document.getElementById('feedback-title');
+            const icon = document.getElementById('feedback-icon');
+            const rationale = document.getElementById('feedback-rationale');
+
+            if (isCorrect) {
+                playCorrectSound(); // Phát âm thanh chọn ĐÚNG
+                participants[currentIndex].score += 10;
+                participants[currentIndex].correctCount++;
+                icon.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+                title.innerText = gameMode === 'single' ? "Chính Xác! (+10 điểm)" : `${participants[currentIndex].name} Trả Lời Chính Xác! (+10 điểm)`;
+                title.className = "text-2xl font-bold text-emerald-400";
+            } else {
+                playIncorrectSound(); // Phát âm thanh chọn SAI
+                if (gameMode === 'group') {
+                    participants[currentIndex].score = Math.max(0, participants[currentIndex].score - 5);
+                }
+                icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-400"></i>';
+                title.innerText = gameMode === 'single' ? "Chưa Chính Xác!" : `${participants[currentIndex].name} Chưa Chính Xác! (-5 điểm)`;
+                title.className = "text-2xl font-bold text-red-400";
+            }
+
+            rationale.innerHTML = rationaleText;
+        }
+
+        function nextQuestion() {
+            if (gameMode === 'group') {
+                currentIndex = (currentIndex + 1) % participants.length;
+            }
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                document.getElementById('feedback-screen').classList.add('hidden');
+                document.getElementById('game-screen').classList.remove('hidden');
+                loadQuestion();
+            } else {
+                endGame(); // Nộp bài và hiển thị kết quả
+            }
+        }
+
+        function endGame() {
+            document.getElementById('feedback-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+
+            const container = document.getElementById('final-scoreboard');
+            container.innerHTML = '';
+
+            if (gameMode === 'single') {
+                const student = participants[0];
+                document.getElementById('end-subtitle').innerText = `Học sinh: ${student.name}`;
+                
+                // Quy đổi điểm sang hệ 10 trên tổng số 90 câu
+                const score10 = ((student.correctCount / questions.length) * 10).toFixed(1);
+
+                const div = document.createElement('div');
+                div.className = 'bg-slate-900 border border-teal-500 p-6 rounded-2xl space-y-3 text-center';
+                div.innerHTML = `
+                    <div class="text-slate-400 text-sm">Tổng số câu đúng: <b class="text-white">${student.correctCount} / ${questions.length}</b></div>
+                    <div class="text-4xl font-extrabold text-teal-300">${score10} <span class="text-xl font-bold text-slate-300">/ 10 Điểm</span></div>
+                    <div class="text-xs text-slate-400 pt-2">${Number(score10) >= 8 ? '🌟 Xuất sắc! Bạn nắm rất vững toàn diện kiến thức Chương 4 Hóa học 12.' : Number(score10) >= 5 ? '👍 Khá tốt! Hãy ôn luyện thêm các câu hỏi vận dụng chuyên sâu nhé.' : '📖 Cần cố gắng ôn lại lý thuyết các Bài 12, 13, 14 nhé!'}</div>
+                `;
+                container.appendChild(div);
+            } else {
+                document.getElementById('end-subtitle').innerText = "Trò chơi đã kết thúc! Tổng kết điểm số các đội chơi.";
+                const sortedList = [...participants].sort((a, b) => b.score - a.score);
+                sortedList.forEach((p, idx) => {
+                    const div = document.createElement('div');
+                    div.className = `flex justify-between items-center p-4 rounded-xl border ${idx === 0 ? 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold' : 'bg-slate-900 border-slate-700 text-white'}`;
+                    div.innerHTML = `
+                        <div class="flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-full flex items-center justify-center font-bold ${idx === 0 ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-300'}">${idx + 1}</span>
+                            <span>${p.name}</span>
+                        </div>
+                        <span class="text-xl font-extrabold">${p.score} điểm</span>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            confetti({
+                particleCount: 160,
+                spread: 85,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function restartGame() {
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('setup-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
